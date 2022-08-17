@@ -28,12 +28,9 @@ namespace osu.Framework.Input.Handlers.Mouse
             Description = "Allows for sensitivity adjustment and tighter control of input",
         };
 
-        public BindableDouble Sensitivity { get; } = new BindableDouble(1)
-        {
-            MinValue = 0.1,
-            MaxValue = 10,
-            Precision = 0.01
-        };
+        public BindableDouble Sensitivity { get; } = new BindableDouble(1);
+
+        public Bindable<Vector2> AxisSensitivity { get; } = new Bindable<Vector2>(new Vector2(1f));
 
         public override string Description => "Mouse";
 
@@ -99,6 +96,11 @@ namespace osu.Framework.Input.Handlers.Mouse
             {
                 window.MouseAutoCapture = !e.NewValue;
                 updateRelativeMode();
+            }, true);
+
+            Sensitivity.BindValueChanged(e =>
+            {
+                AxisSensitivity.Value = new Vector2((float)e.NewValue);
             }, true);
 
             Enabled.BindValueChanged(enabled =>
@@ -177,6 +179,7 @@ namespace osu.Framework.Input.Handlers.Mouse
         public override void Reset()
         {
             Sensitivity.SetDefault();
+            AxisSensitivity.SetDefault();
             base.Reset();
         }
 
@@ -206,7 +209,7 @@ namespace osu.Framework.Input.Handlers.Mouse
 
         protected virtual void HandleMouseMoveRelative(Vector2 delta)
         {
-            enqueueInput(new MousePositionRelativeInput { Delta = delta * (float)Sensitivity.Value });
+            enqueueInput(new MousePositionRelativeInput { Delta = delta * AxisSensitivity.Value });
         }
 
         private void handleMouseDown(MouseButton button) => enqueueInput(new MouseButtonInput(button, true));

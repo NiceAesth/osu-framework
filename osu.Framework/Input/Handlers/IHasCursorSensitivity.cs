@@ -4,6 +4,7 @@
 #nullable disable
 
 using osu.Framework.Bindables;
+using osuTK;
 
 namespace osu.Framework.Input.Handlers
 {
@@ -13,5 +14,6 @@ namespace osu.Framework.Input.Handlers
     public interface IHasCursorSensitivity
     {
         BindableDouble Sensitivity { get; }
+        Bindable<Vector2> AxisSensitivity { get; }
     }
 }
